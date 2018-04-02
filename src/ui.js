@@ -20,7 +20,9 @@ class UI {
                         <a href="#" class="edit card-link" data-id="${post.id}">
                             <i class="fa fa-pencil"></i>
                         </a>
-                        <a href="#" class="delete card-link">
+                        <a href="#" class="delete card-link" data-id="${
+                            post.id
+                        }">
                             <i class="fa fa-remove"></i>
                         </a>
                     </div>
@@ -29,6 +31,45 @@ class UI {
         });
 
         this.posts.innerHTML = output;
+    }
+
+    fillForm(data) {
+        this.titleInput.value = data.title;
+        this.bodyInput.value = data.body;
+        this.idInput.value = data.id;
+
+        this.changeFormState("edit");
+    }
+
+    changeFormState(type) {
+        if (type === "edit") {
+            this.postSubmit.textContent = "Update Post";
+            this.postSubmit.className = "post-submit btn btn-block btn-warning";
+
+            const button = document.createElement("button");
+            button.className = "post-cancel btn btn-light btn-block";
+            button.appendChild(document.createTextNode("Cancel Edit"));
+
+            const container = document.querySelector(".card-form");
+            const formEnd = document.querySelector(".form-end");
+            container.insertBefore(button, formEnd);
+
+            this.formState = type;
+        } else {
+            this.postSubmit.textContent = "Post it";
+            this.postSubmit.className = "post-submit btn btn-block btn-primary";
+
+            if (document.querySelector(".post-cancel")) {
+                document.querySelector(".post-cancel").remove();
+            }
+
+            this.clearIdInput();
+            this.clearFields();
+        }
+    }
+
+    clearIdInput() {
+        this.idInput.value = "";
     }
 
     showAlert(message, className) {
@@ -42,7 +83,7 @@ class UI {
 
         const container = document.querySelector(".postsContainer");
 
-        container.insertBefore(div, this.posts);
+        container.insertBefore(div, document.querySelector("#posts"));
 
         setTimeout(() => {
             this.clearAlert();
@@ -51,8 +92,6 @@ class UI {
 
     clearAlert() {
         const currentAlert = document.querySelector(".alert");
-
-        console.log("current alert: ", currentAlert);
 
         if (currentAlert) {
             currentAlert.remove();
